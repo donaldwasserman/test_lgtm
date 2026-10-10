@@ -1,0 +1,30 @@
+name: lgtm
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  lgtm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Fetch the target branch
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: git fetch --no-tags origin "$BASE_REF"
+
+      - uses: donaldwasserman/lgtm@v0
+        with:
+          base-ref: origin/${{ github.event.pull_request.base.ref }}
