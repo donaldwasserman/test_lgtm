@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class EventBase(BaseModel):
@@ -61,3 +61,23 @@ class Event(EventInDB):
     category: Optional[dict] = None
     tags: List[dict] = []
     attendee_count: Optional[int] = None
+
+    @staticmethod
+    def _orm_to_dict(obj) -> Optional[dict]:
+        if obj is None or isinstance(obj, dict):
+            return obj
+        return {column.key: getattr(obj, column.key, None) for column in obj.__table__.columns}
+
+    @field_validator("organizer", "venue", "category", mode="before")
+    @classmethod
+    def coerce_orm_objects(cls, value):
+        return cls._orm_to_dict(value)
+
+    @field_validator("tags", mode="before")
+    @classmethod
+    def coerce_tag_objects(cls, value):
+        if value is None:
+            return []
+        if isinstance(value, list):
+            return [cls._orm_to_dict(tag) for tag in value]
+        return value

@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { Calendar, MapPin, User, LogOut } from 'lucide-react'
+import { MapPin, User, LogOut } from 'lucide-react'
 import { useAuthStore } from '../lib/authStore'
 import { logout } from '../lib/api'
 
 export default function Navbar() {
-  const { isAuthenticated, user, clearAuth } = useAuthStore()
+  const { isAuthenticated, clearAuth } = useAuthStore()
 
   const handleLogout = async () => {
     await logout()

@@ -7,11 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api import deps
 from app.db.session import get_db
 from app.models.notification import Notification as NotificationModel
+from app.schemas.notification import Notification
 
 router = APIRouter()
 
 
-@router.get("/me", response_model=List[NotificationModel])
+@router.get("/me", response_model=List[Notification])
 async def read_my_notifications(*, db: AsyncSession = Depends(get_db), current_user=Depends(deps.get_current_active_user), skip: int = 0, limit: int = 100) -> Any:
     result = await db.execute(select(NotificationModel).where(NotificationModel.user_id == current_user.id).order_by(NotificationModel.created_at.desc()).offset(skip).limit(limit))
     return result.scalars().all()

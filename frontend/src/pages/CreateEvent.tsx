@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { createEvent, getCategories, getTags, getVenues } from '../lib/api'
+import { createEvent, getCategories, getVenues } from '../lib/api'
 
 export default function CreateEvent() {
   const navigate = useNavigate()
@@ -23,7 +23,6 @@ export default function CreateEvent() {
   })
 
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
-  const { data: tags = [] } = useQuery({ queryKey: ['tags'], queryFn: getTags })
   const { data: venues = [] } = useQuery({ queryKey: ['venues'], queryFn: getVenues })
 
   const mutation = useMutation({
