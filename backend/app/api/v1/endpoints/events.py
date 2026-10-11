@@ -10,7 +10,7 @@ from app.api import deps
 from app.db.session import get_db
 from app.models.event import Event as EventModel, EventStatus
 from app.models.rsvp import Rsvp, RsvpStatus
-from app.models.tag import Tag
+from app.models.category import Tag
 from app.schemas.event import Event, EventCreate, EventUpdate
 
 router = APIRouter()
@@ -131,4 +131,15 @@ async def create_event(
     db.add(db_event)
     await db.commit()
     await db.refresh(db_event)
-    return db_event
+    fresh = await db.execute(
+        select(EventModel).options(
+            selectinload(EventModel.organizer),
+            selectinload(EventModel.venue),
+            selectinload(EventModel.category),
+            selectinload(EventModel.tags),
+        ).where(EventModel.id == db_event.id)
+    )
+    created = fresh.scalar_one()
+    event_dict = Event.model_validate(created).model_dump()
+    event_dict["attendee_count"] = 0
+    return event_dict

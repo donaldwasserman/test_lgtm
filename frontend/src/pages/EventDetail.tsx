@@ -8,7 +8,7 @@ import { useState } from 'react'
 
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>()
-  const { isAuthenticated, user } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
   const queryClient = useQueryClient()
   const [rating, setRating] = useState(5)
   const [comment, setComment] = useState('')

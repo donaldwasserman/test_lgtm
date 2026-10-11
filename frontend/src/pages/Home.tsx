@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Calendar, Users, MapPin, Star } from 'lucide-react'
+import { Calendar, Users, MapPin } from 'lucide-react'
 
 export default function Home() {
   return (
